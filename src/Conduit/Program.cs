@@ -1,17 +1,17 @@
-using Conduit;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
-// read database configuration (database provider + database connection) from environment variables
-var config = new ConfigurationBuilder()
-    .AddEnvironmentVariables()
-    .Build();
+namespace Conduit
+{
+    public class Program
+    {
+        public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
 
-var host = new WebHostBuilder()
-    .UseConfiguration(config)
-    .UseKestrel()
-    .UseUrls($"http://+:5000")
-    .UseStartup<Startup>()
-    .Build();
-
-await host.RunAsync();
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                webBuilder.UseStartup<Startup>()
+                .UseDefaultServiceProvider(options =>
+                    options.ValidateScopes = false));
+    }
+}
